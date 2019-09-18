@@ -1,0 +1,44 @@
+pipeline {
+  agent none
+  
+  stages
+  {
+   stage('checkout')
+    {
+    agent { label 'Buildmachine01' }
+    steps {
+     git branch: 'master', url: 'https://github.com/ajaykumarsahoo/Maven-Project.git'
+   }
+  }
+
+  stage('Build War')
+   {
+   agent { label 'Buildmachine01' }
+    steps {
+     sh "mvn clean package"
+   }
+  }
+
+  stage('Upload Artifactory')
+   {
+   agent { label 'Buildmachine01' }
+    steps {
+     script {
+      /*Define the Artifactory Server details*/
+       def server= Artifactory.server 'myartifactory'
+       def uploadSpec = """{
+           "files": [{
+           "pattern": "target/samplewar.war",
+           "target": "demosept"
+            }]
+      }"""
+    
+    /* Upload the war to Artifactory repo*/
+     server.upload(uploadSpec)
+
+    }
+   }
+  }
+
+ } 
+}
