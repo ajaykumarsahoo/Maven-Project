@@ -33,7 +33,8 @@ pipeline {
             }]
       }"""
     
-    /* Upload the war to Artifactory repo*/
+   
+   /* Upload the war to Artifactory repo*/
      server.upload(uploadSpec)
 
     }
